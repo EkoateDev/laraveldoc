@@ -17,16 +17,25 @@ class RedirectIfAuthenticated
      * @param  string|null  ...$guards
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, ...$guards)
-    {
-        $guards = empty($guards) ? [null] : $guards;
 
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+    public function handle($request, Closure $next, $guard = null)
+    {
+        if (Auth::guard($guard)->check()) {
+            $roles = Auth::user()->roles->pluck('name');
+
+            switch ($roles[0]) {
+                case 'Admin':
+                    return redirect()->route('admindashboard');
+                    break;
+                case 'Regular':
+                    return redirect()->route('regulardashboard');
+                    break;
+
+                default:
+                    return redirect()->route('login');
+                    break;
             }
         }
-
         return $next($request);
     }
 }
