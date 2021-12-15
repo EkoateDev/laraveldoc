@@ -26,5 +26,7 @@ class Administrator
         if ($roles[0] == 'Admin') {
             return $next($request);
         }
+
+        return redirect()->route('home');
     }
 }

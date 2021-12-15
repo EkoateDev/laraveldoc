@@ -58,6 +58,12 @@
 
                         @else
 
+                        @if(Route::has('home')&& Auth::user()->hasRole('Admin'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admindashboard') }}">Admin</a>
+                        </li>
+                        @endif
+
                         @if (Auth::user() && Auth::user()->hasRole('Admin'))
                         <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
                         <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>

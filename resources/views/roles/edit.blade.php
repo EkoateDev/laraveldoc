@@ -2,6 +2,7 @@
 
 @section('content')
 
+<div class="container">
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
@@ -15,14 +16,14 @@
 
 
     @if (count($errors) > 0)
-        <div class="alert alert-danger">
-            <strong>Whoops!</strong> There were some problems with your input.<br><br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="alert alert-danger">
+        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     {!! Form::model($role, ['method' => 'PATCH', 'route' => ['roles.update', $role->id]]) !!}
@@ -39,9 +40,10 @@
                 <strong>Permission:</strong>
                 <br />
                 @foreach ($permission as $value)
-                    <label>{{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, ['class' => 'name']) }}
-                        {{ $value->name }}</label>
-                    <br />
+                <label>{{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true :
+                    false, ['class' => 'name']) }}
+                    {{ $value->name }}</label>
+                <br />
                 @endforeach
             </div>
         </div>
@@ -51,5 +53,5 @@
     </div>
 
     {!! Form::close() !!}
-
+</div>
 @endsection

@@ -34,6 +34,12 @@
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
+                <strong>Username:</strong>
+                {!! Form::text('username', null, ['placeholder' => 'Username', 'class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
                 <strong>Email:</strong>
                 {!! Form::text('email', null, ['placeholder' => 'Email', 'class' => 'form-control']) !!}
             </div>

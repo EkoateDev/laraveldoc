@@ -31,13 +31,12 @@ class LoginController extends Controller
     protected function authenticated($request, $user)
     {
         if ($user->hasRole('Admin')) {
-            return redirect()->route('admindashboard');
+            return redirect()->route('admindashboard')->with('success', 'Admin! You are logged in');
         } elseif ($user->hasRole('Regular')) {
-            return redirect()->route('regulardashboard');
+            return redirect()->route('regulardashboard')->with('success', 'User! You are logged in');
         } else {
-            return redirect('login');
+            return redirect()->route('login');
         }
-
     }
 
     // protected $redirectTo;

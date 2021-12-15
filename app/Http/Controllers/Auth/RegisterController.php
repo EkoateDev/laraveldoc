@@ -5,7 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\UsersTokens;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,7 +36,6 @@ class RegisterController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
-    // protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
      * Create a new controller instance.
@@ -54,7 +59,6 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
@@ -70,10 +74,50 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'username' => $data['username'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
         ]);
         $user->assignRole('Regular');
+
+        UsersTokens::create([
+            'user_id' => $user->id,
+            'name' => 'set_password_token',
+            'status' => 'Active',
+            'token' => str_random(60),
+        ]);
+
+        Mail::send('layouts.welcome-mail', ['user' => $user], function ($message) use ($data) {
+            $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+            $message->to($data['email'])->subject('Setup Your Password');
+        });
+
+        if (count(Mail::failures()) > 0) {
+            return redirect()->route('home')
+                ->with('error', 'Created user but the email to setup password could not be sent!');
+        } else {
+            DB::table('users')->where('id', $user->id)->update(['setup_password_email_sent_at' => date("Y-m-d H:i:s")]);
+
+            return redirect()->route('home')
+                ->with('success', 'Successfully created user and sent an email to the user to setup the password!');
+        }
         return $user;
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        if ($response = $this->registered($request, $user)) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+        ? new JsonResponse([],
+            201
+        )
+            : redirect($this->redirectPath());
     }
 
     public function showRegistrationForm()

@@ -25,5 +25,7 @@ class RegularUser
         if ($roles[0] == 'Regular') {
             return $next($request);
         }
+
+        return redirect()->route('home');
     }
 }
