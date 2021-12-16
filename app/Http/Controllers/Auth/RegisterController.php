@@ -11,6 +11,7 @@ use DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Mail\SetupPasswordEmail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -35,7 +36,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -84,7 +85,8 @@ class RegisterController extends Controller
             'token' => str_random(60),
         ]);
 
-        Mail::send('layouts.welcome-mail', ['user' => $user], function ($message) use ($data) {
+        return $user;
+        Mail::send('layouts.setup-password', ['user' => $user], function ($message) use ($data) {
             $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $message->to($data['email'])->subject('Setup Your Password');
         });
@@ -98,7 +100,6 @@ class RegisterController extends Controller
             return redirect()->route('home')
                 ->with('success', 'Successfully created user and sent an email to the user to setup the password!');
         }
-        return $user;
     }
 
     public function register(Request $request)
@@ -107,17 +108,18 @@ class RegisterController extends Controller
 
         event(new Registered($user = $this->create($request->all())));
 
-        $this->guard()->login($user);
+        $setupPasswordMail = new SetupPasswordEmail($user);
 
-        if ($response = $this->registered($request, $user)) {
-            return $response;
+        Mail::to($user->email)->send($setupPasswordMail);
+        if (count(Mail::failures()) > 0) {
+            return view('auth.verify')
+                ->with('error', 'Created user but the email to setup password could not be sent!');
+        } else {
+            DB::table('users')->where('id', $user->id)->update(['setup_password_email_sent_at' => date("Y-m-d H:i:s")]);
+
+            return view('auth.verify')
+                ->with('success', 'Successfully created user and sent an email to the user to setup the password!');
         }
-
-        return $request->wantsJson()
-        ? new JsonResponse([],
-            201
-        )
-            : redirect($this->redirectPath());
     }
 
     public function showRegistrationForm()

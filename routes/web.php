@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use App\Mail\WelcomeMail;
+use App\Mail\SetupPasswordEmail;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +23,14 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
+Route::get('/setup-password', function () {
+    return view('layouts.setup-password');
+});
+
+Route::get('/test-email', function () {
+    return view('layouts.test-email');
+});
+
 
 
 Route::group(['middleware' => ['auth']], function () {
@@ -34,8 +42,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('index', 'App\Http\Controllers\UsersController@export')->name('users-index');
 
-    Route::get('/email/verify', function () {
-        return view('auth.verify-email');
+    Route::get('/email/verify/{token}', function () {
+        return view('auth.verify');
     })->middleware('auth')->name('verification.notice');
 
     Route::post('/email/verification-notification', function (Request $request) {
@@ -43,7 +51,6 @@ Route::group(['middleware' => ['auth']], function () {
 
         return back()->with('message', 'Verification link sent!');
     })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
     Route::group(['middleware' => ['administrator']], function () {
         Route::get('admin-dashboard', 'App\Http\Controllers\AdminController@index')->name('admindashboard');
         Route::resource('users', UserController::class);

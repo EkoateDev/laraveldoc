@@ -7,11 +7,11 @@
             <div class="card">
                 <div class="card-header">{{ __('Create Password') }}</div>
                 <div class="card-body">
-                    @if(Session::has('message'))
+                    @if(Session::has('success'))
                     <div class="alert alert-success">
-                        {{ Session::get('message') }}
+                        {{ Session::get('success') }}
                         @php
-                        Session::forget('message');
+                        Session::forget('success');
                         @endphp
                     </div>
                     @endif

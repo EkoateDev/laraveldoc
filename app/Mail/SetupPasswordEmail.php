@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeMail extends Mailable
+class SetupPasswordEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,9 +17,12 @@ class WelcomeMail extends Mailable
      * @return void
      */
 
+    protected $user;
+    protected $token;
 
-    public function __construct()
+    public function __construct($user)
     {
+        $this->user = $user;
     }
 
     /**
@@ -29,6 +32,10 @@ class WelcomeMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('layouts.welcome-mail');
+        return $this->markdown('layouts.setup-password')
+            ->with([
+                'token' => $this->token,
+                'user' => $this->user
+            ]);
     }
 }
