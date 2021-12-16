@@ -2,9 +2,6 @@
 <html>
 
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-        
     <style>
         .email-logo {
             height: 45px;
@@ -54,6 +51,21 @@
         .text-left {
             text-align: left;
         }
+
+        a:link,
+        a:visited {
+            background-color: grey;
+            color: white;
+            padding: 14px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        a:hover,
+        a:active {
+            background-color: green;
+        }
     </style>
 </head>
 
@@ -65,14 +77,14 @@
     <div class="set-content-position text-left">
         <div class="font-normal">
             <p>Hi {{ $user->name }},
-            </p><br>
+            </p>
             <p>Your account has been created on NekoHub</b>.
             </p>
 
             <p>Please click on the button below to setup your password
             </p>
-            <a class="btn btn-primary" href="{{ url('create-password?token='.$user->set_password_token) }}" role="button">Create
-                Password
+            <a class="btn btn-primary" href="{{ url('create-password?token='.$user->set_password_token) }}"
+                role="button">Create Password
             </a>
             <br><br>
 
@@ -85,12 +97,7 @@
             </p><br>
         </div>
     </div>
-    <div class="set-content-position text-center">
-        <div class="email-line"></div>
-    </div>
-    <div class="set-content-position text-center">
-        <div class="email-line"></div>
-    </div>
+
 </body>
 <footer>
     <address class="set-content-position text-center">
