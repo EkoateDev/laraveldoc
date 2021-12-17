@@ -18,7 +18,6 @@ class SetupPasswordEmail extends Mailable
      */
 
     protected $user;
-    protected $token;
 
     public function __construct($user)
     {
@@ -34,7 +33,6 @@ class SetupPasswordEmail extends Mailable
     {
         return $this->markdown('layouts.setup-password')
             ->with([
-                'token' => $this->token,
                 'user' => $this->user
             ]);
     }

@@ -83,7 +83,7 @@
 
             <p>Please click on the button below to setup your password
             </p>
-            <a class="btn btn-primary" href="{{ url('create-password?token='.$user->set_password_token) }}"
+            <a class="btn btn-primary" href="{{ url('create-password?token='.$user->password_token) }}"
                 role="button">Create Password
             </a>
             <br><br>
@@ -97,7 +97,6 @@
             </p><br>
         </div>
     </div>
-
 </body>
 <footer>
     <address class="set-content-position text-center">

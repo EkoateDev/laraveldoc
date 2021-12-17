@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+
 
 class PasswordController extends Controller
 {
@@ -18,9 +20,12 @@ class PasswordController extends Controller
     public function index(Request $request)
     {
         $token = $request->route()->parameter('token');
-        return view('auth.passwords.create-password')->with(
-            ['token' => $token, 'email' => $request->email]
-        );
+        return view('auth.passwords.create-password')
+            ->with(
+                [
+                    'token' => $token, 'email' => $request->email
+                ]
+            );
     }
 
     protected function create(array $data)

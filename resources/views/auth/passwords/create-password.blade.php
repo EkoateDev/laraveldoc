@@ -15,7 +15,7 @@
                         @endphp
                     </div>
                     @endif
-                    <form method="POST" id="create-password" action="{{ route('create-password') }}">
+                    <form method="POST" action="{{ route('create-password') }}">
                         @csrf
 
                         <input type="hidden" name="token" value="{{ $token }}">

@@ -78,28 +78,15 @@ class RegisterController extends Controller
         ]);
         $user->assignRole('Regular');
 
-        UsersTokens::create([
+        $userToken = UsersTokens::create([
             'user_id' => $user->id,
             'name' => 'set_password_token',
             'status' => 'Active',
             'token' => str_random(60),
         ]);
 
+        $user['password_token'] = $userToken->token;
         return $user;
-        Mail::send('layouts.setup-password', ['user' => $user], function ($message) use ($data) {
-            $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-            $message->to($data['email'])->subject('Setup Your Password');
-        });
-
-        if (count(Mail::failures()) > 0) {
-            return redirect()->route('home')
-                ->with('error', 'Created user but the email to setup password could not be sent!');
-        } else {
-            DB::table('users')->where('id', $user->id)->update(['setup_password_email_sent_at' => date("Y-m-d H:i:s")]);
-
-            return redirect()->route('home')
-                ->with('success', 'Successfully created user and sent an email to the user to setup the password!');
-        }
     }
 
     public function register(Request $request)
