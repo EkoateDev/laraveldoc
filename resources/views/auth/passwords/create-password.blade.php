@@ -15,6 +15,16 @@
                         @endphp
                     </div>
                     @endif
+
+                    @if(Session::has('error'))
+                    <div class="alert alert-error">
+                        {{ Session::get('error') }}
+                        @php
+                        Session::forget('error');
+                        @endphp
+                    </div>
+                    @endif
+
                     <form method="POST" action="{{ route('create-password') }}">
                         @csrf
 

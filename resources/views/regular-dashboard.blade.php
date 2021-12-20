@@ -12,7 +12,14 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    {{ __('Hello '.Auth::user()->username . ' welcome') }}
+
+                    @if (Session::has('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {{ Session::get('success') }}
+                    </div>
+                    @endif
+                    {{ __('Hello '.Auth::user()->username . ' welcome, you are a Regular-user ') }}
                 </div>
             </div>
         </div>

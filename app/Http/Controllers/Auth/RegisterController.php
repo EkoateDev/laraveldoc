@@ -86,6 +86,7 @@ class RegisterController extends Controller
         ]);
 
         $user['password_token'] = $userToken->token;
+        // $user['set_password_token'] = $userToken->name;
         return $user;
     }
 

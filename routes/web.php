@@ -61,3 +61,4 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::get('create-password', 'App\Http\Controllers\PasswordController@index')->name('create-password');
+Route::post('create-password', 'App\Http\Controllers\PasswordController@setPassword')->name('create-password');
