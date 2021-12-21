@@ -13,6 +13,20 @@
                         {{ session('status') }}
                     </div>
                     @endif
+
+                    @if ($message = Session::get('success'))
+                    <div class="alert alert-success alert-block">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>{{ $message }}</strong>
+                    </div>
+                    @endif
+
+                    @if ($message = Session::get('error'))
+                    <div class="alert alert-danger alert-block">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>{{ $message }}</strong>
+                    </div>
+                    @endif
                     {{ __('Hello '.Auth::user()->username . ' welcome, You are logged in!') }}
                 </div>
             </div>

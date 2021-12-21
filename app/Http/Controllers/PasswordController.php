@@ -33,7 +33,6 @@ class PasswordController extends Controller
 
     public function setPassword(Request $request)
     {
-
         $request->validate([
             'token' => 'required',
             'password' => 'required|string|min:6|confirmed',
@@ -60,6 +59,7 @@ class PasswordController extends Controller
                     'status' => 'expired'
                 ]);
 
+                return redirect()->back()->with('error', 'Your Token is Expired');
                 // return message token is expired
             }
 
@@ -71,49 +71,15 @@ class PasswordController extends Controller
                 'status' => 'used'
             ]);
 
+            return redirect()->route('regulardashboard')
+                ->with('success', 'Your Password has been updated succefully!');
             // return success message
         } else {
+            return redirect()->route('home')
+                ->with('error', 'Your token is invalid');
             // return with token invalid message
         }
     }
-
-    // public function updateUserPassword(Request $request, $id)
-    // {
-    //     $this->validate($request, [
-    //         'password' => 'required', 'string', 'min:8', 'confirmed',
-    //     ]);
-
-    //     $input = $request->all();
-    //     if (!empty($input['password'])) {
-    //         $input['password'] = Hash::make($input['password']);
-    //     } else {
-    //         $input = Arr::except($input, array('password'));
-    //     }
-
-    //     $user = User::find($id);
-    //     $user->update($input);
-    //     DB::table('users')->where('user_id', $id)->delete();
-    //     return redirect()->route('regulardashboard')
-    //         ->with('success', 'User Password Updated successfully');
-    // }
-
-    // public function updateUserPassword(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         'password' => 'required' , 'string', 'min:8', 'confirmed',
-    //         'name' => 'required' , 'string',
-    //     ]);
-
-    //     $input = $request->all();
-    //     $input['password'] = Hash::make($input['password']);
-    //     $input['name'];
-
-
-    //     $input = DB::update($input);
-    //     return redirect()->route('regulardashboard')
-    //         ->with('success', 'Password Updated successfully');
-    // }
-
 
     protected function rules()
     {
@@ -123,13 +89,6 @@ class PasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
     }
-
-    // protected function validator(array $data)
-    // {
-    //     return Validator::make($data, [
-    //         'password' => ['required', 'string', 'min:8', 'confirmed'],
-    //     ]);
-    // }
 
     protected function validationErrorMessages()
     {

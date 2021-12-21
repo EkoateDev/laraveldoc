@@ -86,7 +86,7 @@ class RegisterController extends Controller
         ]);
 
         $user['password_token'] = $userToken->token;
-        // $user['set_password_token'] = $userToken->name;
+
         return $user;
     }
 
@@ -96,10 +96,9 @@ class RegisterController extends Controller
 
         event(new Registered($user = $this->create($request->all())));
 
-        $setupPasswordMail = new SetupPasswordEmail($user);
+        $sentEmail = $this->sendMail($user);
 
-        Mail::to($user->email)->send($setupPasswordMail);
-        if (count(Mail::failures()) > 0) {
+        if ($sentEmail) {
             return view('auth.verify')
                 ->with('error', 'Created user but the email to setup password could not be sent!');
         } else {
@@ -107,6 +106,19 @@ class RegisterController extends Controller
 
             return view('auth.verify')
                 ->with('success', 'Successfully created user and sent an email to the user to setup the password!');
+        }
+    }
+
+    public function sendMail($user)
+    {
+        $setupPasswordMail = new SetupPasswordEmail($user);
+
+        Mail::to($user->email)->send($setupPasswordMail);
+
+        if (count(Mail::failures()) > 0) {
+            return false;
+        } else {
+            return true;
         }
     }
 

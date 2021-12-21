@@ -61,4 +61,5 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::get('create-password', 'App\Http\Controllers\PasswordController@index')->name('create-password');
+Route::get('resend-email/{userId}', 'App\Http\Controllers\UserController@resendPasswordEmail')->name('resend-email');
 Route::post('create-password', 'App\Http\Controllers\PasswordController@setPassword')->name('create-password');

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Models\User;
+use App\Models\UsersTokens;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
@@ -138,5 +140,43 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
+    }
+
+
+    public function resendPasswordEmail($userId)
+    {
+        $userToken = UsersTokens::where('name', 'set_password_token')
+            ->where('status', 'Active')
+            ->where('user_id', $userId)
+            ->first();
+
+        if (isset($userToken, $userToken->id)) {
+            $userToken->update([
+                'status' => 'Cancelled'
+            ]);
+        }
+
+        $newUserToken = UsersTokens::create([
+            'user_id' => $userId,
+            'name' => 'set_password_token',
+            'status' => 'Active',
+            'token' => str_random(60),
+        ]);
+
+        $user = User::where('id', $userId)
+            ->first();
+
+        $registerController = new RegisterController;
+        $sentEmail = $registerController->sendMail($user);
+
+        if ($sentEmail ==  false) {
+            return redirect()->back()
+                ->with('error', 'Password could not be sent!');
+        } else {
+            DB::table('users')->where('id', $user->id)->update(['setup_password_email_sent_at' => date("Y-m-d H:i:s")]);
+
+            return redirect()->back()
+                ->with('success', 'Successfully sent an email to the user to setup the password!');
+        }
     }
 }

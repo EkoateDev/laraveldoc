@@ -1,27 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
+
+@include('flash-message')
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('Create Password') }}</div>
                 <div class="card-body">
-                    @if(Session::has('success'))
-                    <div class="alert alert-success">
-                        {{ Session::get('success') }}
-                        @php
-                        Session::forget('success');
-                        @endphp
+                    @if ($message = Session::get('success'))
+                    <div class="alert alert-success alert-block">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>{{ $message }}</strong>
                     </div>
                     @endif
 
-                    @if(Session::has('error'))
-                    <div class="alert alert-error">
-                        {{ Session::get('error') }}
-                        @php
-                        Session::forget('error');
-                        @endphp
+                    @if ($message = Session::get('error'))
+                    <div class="alert alert-danger alert-block">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>{{ $message }}</strong>
                     </div>
                     @endif
 
